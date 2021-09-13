@@ -16,18 +16,19 @@ public class InputImage {
         
     }
 
-    public InputImage(String fileUrl, int x, int y) {
-        this.AssignImage(fileUrl);
-        this.imageX = x;
-        this.imageY = y;
+    // I added this incase you want to assign the image immediately.
+    // Mostly unused because of the assignImage function.
+    public InputImage(String fileUrl) {
+        this.assignImage(fileUrl);
     }
 
-    public void AssignImage(String fileUrl) {
+    public void assignImage(String fileUrl) {
         this.currentImg = this.createImage(fileUrl);
         this.imageX = this.currentImg.getWidth();
         this.imageY = this.currentImg.getHeight();
     }
 
+    // Returns a BufferedImage from the fileURL.
     public BufferedImage createImage(String fileUrl) {
         try {
             BufferedImage img = ImageIO.read(new File(fileUrl));
@@ -38,8 +39,11 @@ public class InputImage {
         return null;
     }
 
+    // Returns a 3D matrix. An RGB image is 3 x imageHeight x ImageWidth
     public float[][][] getPictureArray(boolean normalize) {
         float[][][] output = new float[3][imageY][imageX];
+        // I figured it would be computational faster to decide whether the values should be normalized before it scan the image.
+        // Each case virtually does the same thing except one is normalized between -1 and 1.
         if(normalize) {
             for(int y = 0; y < imageY; y++) {
                 for(int x = 0; x < imageX; x++) {
@@ -60,6 +64,9 @@ public class InputImage {
         return output;
     }
 
+    // This was a failed test for a more efficient way to get image data.
+    // Possibly get it working in the future.
+    // It uses the images byte data instead of retreaving pixel data individually.
     public int getPixelValues(BufferedImage img, int x, int y) {
         byte[] pixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
         int index = 4 * (x + (y * (img.getWidth())));
@@ -71,6 +78,9 @@ public class InputImage {
         return value;
     }
 
+    // Also used to test if the image data was correct.
+    // Prints out each 2D panel of pixel data. Essientally a 2D matrix of all the blues values, or red values, etc.
+    // If you try using it you can see a vague impression of the image itself.
     public void printImageArray(float[][][] array, int width, int height) {
         for(int c = 0; c < 3; c++) {
             for(int y = 0; y < height; y++) {
@@ -85,3 +95,4 @@ public class InputImage {
     }
 
 }
+
